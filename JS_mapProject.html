@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/2.1.2/gpx.min.js"></script>
+
+    <link rel="stylesheet" href="./projectStylesheet.css">
+</head>
+
+<body>
+
+    <div id="myDiv">
+        <h1>Visual Hike Planner</h1>
+        <section class="mapSection">
+            <div id="map"></div>
+        </section>
+        <button type="button" id="toggleEndPoints">Add End Points</button>
+        <button onclick="reverseStartFinish()">West to East</button>
+        <section id="data">
+
+        </section>
+    </div>
+
+    <template id="segmentTemplate">
+        <div class="card">
+            <h3 class="title"></h3>
+            <li class="distance">Cacoa</li>
+            <li class="elevationGain"></li>
+            <li class="elevationLoss"></li>
+            <li class="duration"></li>
+        </div>
+    </template>
+
+    <script src="./projectScript.js">
+    </script>
+</body>
+
+</html>
