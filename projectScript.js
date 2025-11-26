@@ -2,10 +2,7 @@
 const map = L.map('map', {
     //center: [36.55, 29.90],
     zoom: 9,
-    maxBounds: [
-        [36, 29],
-        [37.1, 31]
-    ],
+
     minZoom: 7,
 });
 
@@ -22,7 +19,7 @@ thunderForestOutdoors = L.tileLayer('https://tile.thunderforest.com/outdoors/{z}
 
 
 // finds gpx file and sets gpx options
-const url = './lycianWayALL.gpx';
+const url = './caminoRoute.gpx';
 const options = {
     async: true,
     polyline_options: { color: 'red' },
@@ -34,103 +31,116 @@ const options = {
 
 //GLOBAL VARIBLES DECLARATION
 const activePoints = []
-const elevation = function (n) { return gpx._info.elevation._points[n][1] }
-const distanceFromStart = n => gpx._info.elevation._points[n][0]
-let points
-let segmData
+let pointsArray = []
+let isTrackReversed = false
+let isEndPointActive = false
 
 
 
 //Creates gpx layer
 const gpx = new L.GPX(url, options).on("addline", function (e) {
-    console.log(e)
 
     const polyline = e.line;            // This is the track line
-    points = polyline.getLatLngs(); // Array of LatLng points
+    let points = polyline.getLatLngs(); // Array of LatLng points
+    const gpxData = gpx._info.elevation._points
     //addEndPoints()
 
-    gpx.on("click", (e) => {            //onclick event on the polyline or gpx track
+//this gather the data in a single array
+    pointsArray = gpxData.map((pt, index) => ({ //parenthesis around the object makes it return the object
+        lat: points[index].lat,
+        lng: points[index].lng,
+        elevation: pt[1],
+        distanceFromStart: pt[0],
+        index
+    }))
+    
+    polyline.on("click", (e) => {        //onclick event on the polyline or gpx track
         getClosestPoint(e);
     })
+
 }).on('loaded', function (e) {
 
     map.fitBounds(e.target.getBounds());
 }).addTo(map);
 
-/*  Implement After fixing structure
+
+
+
+  //Implement After fixing structure
 const endPointsBtn = document.getElementById("toggleEndPoints");
 endPointsBtn.addEventListener("click", toggleEndPoints);
-let endPointsIsActive = false
 function toggleEndPoints() {
-    if (endPointsIsActive === false) {
-    activePoints.push({ lat: points[0].lat, lng: points[0].lng, distanceFromStart: distanceFromStart(0), elevation: elevation(0), index: 0 })
-    activePoints.push({ lat: points[points.length - 1].lat, lng: points[points.length - 1].lng, distanceFromStart: distanceFromStart(points.length - 1), elevation: elevation(points.length - 1), index: points.length - 1 })
-    const startMarker = L.marker(points[0])
-    startMarker.index = 0
-    const endMarker = L.marker(points[points.length - 1])
-    endMarker.index = points.length - 1
-    startMarker.addTo(map);
-    endMarker.addTo(map);
-    endPointsIsActive = true
-    } else {
+    isEndPointActive = !isEndPointActive
+    const startPoint = pointsArray[0]
+    const endPoint = pointsArray[pointsArray.length -1];
+    console.log(endPoint)
 
+    if (isEndPointActive) { //fix when user clicks on end markers
+        addActivePoints(startPoint)
+        addActivePoints(endPoint)
+        addMarker(startPoint)
+        addMarker(endPoint)
+    } else {
+        activePoints.splice(0, 1)
+        activePoints.splice(activePoints.length - 1 , 1)
+        //removeMarker() Come Fare? Forse creare una classe marker con metodo remove?
     }
 calcSegmentData()
 }
-*/
+
 function getClosestPoint(e) {
-    let minDistance = map.distance(e.latlng, points[0]);
+    let minDistance = 1000000000000;
     let nearestPoint
+
     //loop checking distance of click and retrieving the nearest point on the line
-    for (let i = 0; i < points.length; i++) {
-        let clickDistance = map.distance(e.latlng, points[i]);
+    pointsArray.forEach((pt) => {
+        let clickDistance = map.distance(e.latlng, pt);
         if (clickDistance < minDistance) {
             minDistance = clickDistance
-            nearestPoint = points[i]
-            index = i                //assigning the gpx point index to find other info
+            nearestPoint = pt
         }
-    }
-    const aMarker = L.marker(nearestPoint)
-    aMarker.index = index
-    aMarker.addTo(map);
-    //console.log(aMarker)
-
-
-    aMarker.on("click", () => {       //trying to delete the point corresponding to the marker
-        aMarker.remove()
-
-        activePoints.splice(activePoints.findIndex(point => point.index === aMarker.index), 1)
-        calcSegmentData()
     })
-
-    activePoints.push({ lat: nearestPoint.lat, lng: nearestPoint.lng, distanceFromStart: distanceFromStart(index), elevation: elevation(index), index })
-    // sorting it by index (distance from the east starting point)
-    activePoints.sort((a, b) => a.index - b.index)
-
+    
+    addMarker(nearestPoint)
+    addActivePoints(nearestPoint)
     calcSegmentData()
 }
 
-// is the repo working?
+function addActivePoints(pt) {
+    activePoints.push(pt)
+    // sorting it by index (distance from the east starting point)
+    activePoints.sort((a, b) => a.index - b.index)
+}
+
+function addMarker(pt) {
+    const aMarker = L.marker(pt)
+    aMarker.index = pt.index
+    aMarker.addTo(map);
+    
+    aMarker.on("click", () => {       //trying to delete the point corresponding to the marker
+        aMarker.remove()
+        activePoints.splice(activePoints.findIndex((pt) => pt.index === aMarker.index), 1)
+        calcSegmentData()        
+    })
+}
 
 function calcSegmentData() {
-
+    
     const segmDistances = []
     const segmElevation = []           // emptying the arrays
     const segmDuration = []
-
+    
     for (let i = 0; i < activePoints.length - 1; i++) {     //cycle through the points and calculate distance between each point
         let current = activePoints[i]
         let next = activePoints[i + 1]
-        let currentDistance = current.distanceFromStart
-        let nextDistance = next.distanceFromStart
-        let segmDistance = nextDistance - currentDistance
+        let segmDistance = Math.abs(next.distanceFromStart - current.distanceFromStart)
         segmDistances.push(segmDistance)
-
+        
         let segmGain = 0
         let segmLoss = 0
-
+        
         for (let x = current.index; x < next.index; x++) {      //cycle through every point in the segment to get exact elevation delta
-            let elevationDelta = elevation(x + 1) - elevation(x)
+            let elevationDelta = pointsArray[x + 1].elevation - pointsArray[x].elevation
             if (elevationDelta > 0) {
                 segmGain += elevationDelta
             } else if (elevationDelta < 0) {
@@ -138,35 +148,47 @@ function calcSegmentData() {
             }
         }
         segmElevation.push({ segmGain, segmLoss })
-
+        
         let flatSpeed = 4
         let elevationSpeed = 0.5
-
-        let segmTime = ((segmDistance / 1000) / flatSpeed) + ((segmGain / 1000) / elevationSpeed)
-
+        let segmTime
+        
+        if (!isTrackReversed) {
+            segmTime = ((segmDistance / 1000) / flatSpeed) + ((segmGain / 1000) / elevationSpeed)
+        }
+        if (isTrackReversed) {
+            segmTime = ((segmDistance / 1000) / flatSpeed) + ((segmLoss / 1000) / elevationSpeed)
+        }
+        
         segmDuration.push(segmTime)
     }
 
+        let segmData = segmDistances.map((distance, index, arr) => { //copying the segment data in a new array
+            const elevationGain = segmElevation[index].segmGain;
+            const elevationLoss = segmElevation[index].segmLoss;
+            const duration = segmDuration[index];
+            return { distance, elevationGain, elevationLoss, duration }
+        })
 
+        if (isTrackReversed) {
+            segmData = segmData.reverse().map((segm) => ({...segm, elevationGain: segm.elevationLoss, elevationLoss: segm.elevationGain }))
+        }
 
-    segmData = segmDistances.map((distance, index, arr) => { //copying the segment data in a new array
-        const elevationGain = segmElevation[index].segmGain;
-        const elevationLoss = segmElevation[index].segmLoss;
-        const duration = segmDuration[index];
-        return { distance, elevationGain, elevationLoss, duration }
-    })
     console.log({ activePoints })
-    //console.log({ segmData })
-
-    renderData()
+    console.log({ segmData })
+    
+    renderData(segmData)
 }
 
-
+function reverseStartFinish() {
+    isTrackReversed = !isTrackReversed
+    calcSegmentData()
+}
 
 const segmentTemplate = document.getElementById("segmentTemplate")
 const dataContainer = document.getElementById("data")
 
-function renderData() {
+function renderData(segmData) {
     dataContainer.replaceChildren()
     segmData.map((segm, index) => {
         const card = segmentTemplate.content.cloneNode(true).children[0]
