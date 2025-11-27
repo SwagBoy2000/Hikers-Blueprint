@@ -19,10 +19,10 @@ thunderForestOutdoors = L.tileLayer('https://tile.thunderforest.com/outdoors/{z}
 
 
 // finds gpx file and sets gpx options
-const url = './caminoRoute.gpx';
+const url = './lycianWayALL.gpx';
 const options = {
     async: true,
-    polyline_options: { color: 'red' },
+    polyline_options: { color: 'green' },
     markers: {
         startIcon: null,
         endIcon: null,
@@ -34,7 +34,20 @@ const activePoints = []
 let pointsArray = []
 let isTrackReversed = false
 let isEndPointActive = false
+let startMarker = null
+let endMarker = null
+let redIcon = L.icon({
+    iconUrl: 'red_pin.png',
+    iconSize:     [24, 34], // size of the icon
+    iconAnchor:   [12, 31], // point of the icon which will correspond to marker's location
+});
+let blueIcon = L.icon({
+    iconUrl: 'blue_pin.png',
+    iconSize:     [24, 34], // size of the icon
+    iconAnchor:   [12, 31], // point of the icon which will correspond to marker's location
 
+});
+L.Marker.prototype.options.icon = blueIcon
 
 
 //Creates gpx layer
@@ -43,7 +56,6 @@ const gpx = new L.GPX(url, options).on("addline", function (e) {
     const polyline = e.line;            // This is the track line
     let points = polyline.getLatLngs(); // Array of LatLng points
     const gpxData = gpx._info.elevation._points
-    //addEndPoints()
 
 //this gather the data in a single array
     pointsArray = gpxData.map((pt, index) => ({ //parenthesis around the object makes it return the object
@@ -65,29 +77,38 @@ const gpx = new L.GPX(url, options).on("addline", function (e) {
 
 
 
-
-  //Implement After fixing structure
 const endPointsBtn = document.getElementById("toggleEndPoints");
 endPointsBtn.addEventListener("click", toggleEndPoints);
 function toggleEndPoints() {
     isEndPointActive = !isEndPointActive
     const startPoint = pointsArray[0]
     const endPoint = pointsArray[pointsArray.length -1];
-    console.log(endPoint)
 
-    if (isEndPointActive) { //fix when user clicks on end markers
+    if (isEndPointActive) {
         addActivePoints(startPoint)
         addActivePoints(endPoint)
-        addMarker(startPoint)
-        addMarker(endPoint)
+        endPointsBtn.textContent = "Remove End Points"
+        startMarker = L.marker(startPoint, {icon: redIcon})
+        endMarker = L.marker(endPoint, {icon: redIcon})
+        startMarker.index = startPoint.index
+        endMarker.index = endPoint.index
+        startMarker.addTo(map)
+        endMarker.addTo(map)
     } else {
+        endPointsBtn.textContent = "Add End Points"
+
         activePoints.splice(0, 1)
         activePoints.splice(activePoints.length - 1 , 1)
-        //removeMarker() Come Fare? Forse creare una classe marker con metodo remove?
+
+        startMarker.remove()
+        endMarker.remove()
+        // How do I make the second block aware of the variable declared in the first? So I can remove de markers 
     }
 calcSegmentData()
 }
 
+
+console.log(map)
 function getClosestPoint(e) {
     let minDistance = 1000000000000;
     let nearestPoint
