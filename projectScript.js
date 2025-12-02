@@ -87,7 +87,7 @@ function toggleEndPoints() {
     if (isEndPointActive) {
         addActivePoints(startPoint)
         addActivePoints(endPoint)
-        endPointsBtn.textContent = "Remove End Points"
+        //endPointsBtn.lastChild.textContent = "Remove End Points"
         startMarker = L.marker(startPoint, {icon: redIcon})
         endMarker = L.marker(endPoint, {icon: redIcon})
         startMarker.index = startPoint.index
@@ -95,7 +95,7 @@ function toggleEndPoints() {
         startMarker.addTo(map)
         endMarker.addTo(map)
     } else {
-        endPointsBtn.textContent = "Add End Points"
+        //endPointsBtn.lastChild.textContent = "Add End Points"
 
         activePoints.splice(0, 1)
         activePoints.splice(activePoints.length - 1 , 1)
@@ -220,7 +220,7 @@ function renderData(segmData) {
         const elevationLoss = card.querySelector(".elevationLoss")
         const duration = card.querySelector(".duration")
 
-        title.textContent = "Segment " + (1 + +index)
+        title.textContent = "#" + (1 + +index)
         distance.textContent = "Distance: " + Math.round(segm.distance / 10) / 100 + " km"
         elevationGain.textContent = "Elevation gain: " + Math.round(segm.elevationGain) + " m"
         elevationLoss.textContent = "Elevation loss: " + Math.round(segm.elevationLoss) + " m"
