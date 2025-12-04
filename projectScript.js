@@ -2,9 +2,12 @@
 const map = L.map('map', {
     //center: [36.55, 29.90],
     zoom: 9,
-
     minZoom: 7,
+    attributionControl: false,
+    zoomControl: false,
 });
+
+L.control.zoom({ position: 'bottomleft' }).addTo(map);
 
 //https://leaflet-extras.github.io/leaflet-providers/preview
 //Other Maps database
@@ -214,7 +217,7 @@ function renderData(segmData) {
     segmData.map((segm, index) => {
         const card = segmentTemplate.content.cloneNode(true).children[0]
 
-        const title = card.querySelector(".title")
+        const title = card.querySelector(".segment")
         const distance = card.querySelector(".distance")
         const elevationGain = card.querySelector(".elevationGain")
         const elevationLoss = card.querySelector(".elevationLoss")

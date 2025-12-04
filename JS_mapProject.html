@@ -14,38 +14,46 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/2.1.2/gpx.min.js"></script>
 
     <script src="https://kit.fontawesome.com/13bdb816b5.js" crossorigin="anonymous"></script>
-    
+
     <link rel="stylesheet" href="./projectStylesheet.css">
 </head>
 
 <body>
-    <div id="myDiv">
-        <h1>Visual Hike Planner</h1>
-        <section id="mapBox">
+    <section class="title">
+        <h1>Hiker's Blueprint </h1>
+        <span>Build Your Route</span>
+    </section>
+    <section id="content">
+
+        <div id="mapBox">
             <div id="map">
-                
+    
             </div>
             <div id="buttonBox">
                 <button type="button" id="toggleEndPoints"><i class="fa-solid fa-route"></i></button>
                 <button onclick="reverseStartFinish()"><i class="fa-solid fa-signs-post"></i></button>
             </div>
-        </section>
-        <h2>Segments</h2>
-        <section id="dataBox">
+        </div>
+        <div class="dataBox">
+            <h2>Segments:</h2>
             <div id="data">
-                <span style="color: grey">Click on the map to add waypoints</span>
+                <span style="color: grey; padding: 0.6rem">Click on the line to add waypoints</span>
             </div>
-            
-        </section>
-    </div>
+    
+        </div>
+    </section>
 
     <footer>
-        copyright: Massimo Pietrucci
+        <p>
+            Hiker's Blueprint © 2025 — Built by Massimo Pietrucci
+            <br>
+            v1.0.0 &nbsp; • &nbsp; <a href="">GitHub</a> &nbsp; • &nbsp; Route data is approximate — hike responsibly
+        </p>
     </footer>
 
     <template id="segmentTemplate">
         <div class="card">
-            <h3 class="title"></h3>
+            <h3 class="segment"></h3>
             <li class="distance"></li>
             <li class="elevationGain"></li>
             <li class="elevationLoss"></li>

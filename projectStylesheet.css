@@ -3,86 +3,162 @@
 
     --font-size-s: 1rem;
     --font-size-m: 1.4rem;
-    --font-size-l: 2rem;
+    --font-size-l: clamp(1.4rem, calc(1vw + 1.5rem), 5rem);
+    --font-size-footer: 0.75rem;
+
+    --font-size-icon: 1.8rem;
 
 
-    --spacing-width: min(100%, 70rem);
-    --spacing1: 0.5rem;
-    --spacing-inverse: 1rem;
+    --spacing-width: 60rem;
+    --spacing-block-s: min(1vh, 0.5rem);
+    --spacing-inline-s: min(2vw, 0.5rem);
+    --spacing-block-m: min(1.5vh, 1rem);
+    --spacing-inline-m: min(3vw, 1rem);
 
 
 
-    --color-bg1: #0E1113;
-    --color-bg2: #162024;
-    --color-acc1: #22a743;
-    --color-acc2: #91dd9e;
-    --color-acc3: #bac4bf;
-    --color-acc4: #E2C15A;
+    --color-bg1: #f0f0f0;
+    --color-bg2: #f0f0f0b3;
+    --color-acc1: #355b3e;
+    --color-acc2: #47724e;
+    --color-acc3: #f4e28596;
+    --color-acc4: #223b28;
     --color-alert: #E46B4E;
-    --color-body1: #E5E7EB;
+    --color-body1: #111111;
+    --color-body2: #1e2f1f;
 
     --color-shadow: #0e111375;
 
 
 
+
 }
 
-@media (min-width: 762px) {
+@media (min-width: 60em) {
     :root {
-        --font-size-s: 1rem;
-        --font-size-m: 1.8rem;
-        --font-size-l: 2rem;
-        --spacing-inverse: 0;
+        --font-size-s: 1.2rem;
+        --font-size-m: 1.4rem;
+        --font-size-footer: 0.9rem;
     }
 }
 
-html {
-    height: 100%;
-}
+
 
 body {
-    height: 100%;
     display: flex;
+    height: 100dvh;
     flex-direction: column;
-    height: 100%;
-    background: var(--color-bg1);
+    background: var(--color-bg2);
+    background-image: url("./bg2.jpg");
+    background-size: cover;
+    background-blend-mode: lighten;
     font-family: var(--main-font);
     color: var(--color-body1);
     font-size: var(--font-size-s);
 }
 
-#myDiv {
-    flex: 1 0 auto;
-    width: var(--spacing-width);
+#content {
+    display: flex;
+    flex-flow: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+    max-width: var(--spacing-width);
     margin: auto;
+
+    /* For Mobile landscape mode or very small windows
+    @media (max-height: 500px) and (orientation: landscape) {
+   flex-flow: row nowrap;
+}
+   */
 }
 
-
-h1 {
-    position: absolute;
-    z-index: 10;
-    width: var(--spacing-width);
+.title {
+    box-sizing: border-box;
+    display: flex;
+    flex-flow: row wrap;
+    width: 100%;
+    max-width: var(--spacing-width);
     margin: auto;
-    height: calc(var(--font-size-l) + 1rem);
-    backdrop-filter: blur(16px) invert(90%);
+    padding: var(--spacing-block-m) var(--spacing-inline-m);
+    align-items: flex-end;
+    color: var(--color-acc1);
+    gap: var(--spacing-inline-s);
 
-    align-content: center;
-    text-align: center;
-    color: var(--color-acc2);
-    font-size: var(--font-size-l);
-    font-family: "Rockwell", monospace;
+    h1 {
+        z-index: 10;
+        align-content: center;
+        font-size: var(--font-size-l);
+        font-family: "Rockwell", monospace;
+    }
+
+    span {
+        font-style: italic;
+        vertical-align: middle;
+        margin-bottom: 0.1rem;
+    }
 }
+
 
 #mapBox {
     display: flex;
     position: relative;
     flex-direction: column;
+    flex: 3 1 auto;
+    min-height: 40vh; 
+    max-height: 70vh;
 }
 
-#map {
-    height: 45dvh;
-    z-index: 5;
 
+#map {
+    height: 100%;
+    width: 100%;
+    z-index: 5;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    border-radius: 0;
+
+    @media (min-width: 60em) {
+        border-radius: 16px;
+    }
+}
+
+
+.leaflet-control-zoom {
+    border: none !important;
+    display: flex;
+    flex-flow: column;
+    gap: 10px;
+    padding: 6px;
+}
+
+.leaflet-control-zoom a {
+    /*
+    font-size: var(--font-size-m);
+    background-color: var(--color-acc1);
+    border-radius: 40% !important;
+    transition: 0.2s;
+    */
+    position: relative;
+    border: 0;
+    width: 48px !important;
+    height: 48px !important;
+
+    color: var(--color-bg1);
+    background: var(--color-acc1);
+    border-radius: 35% !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    transition: 0.2s ease;
+
+}
+
+.leaflet-control-zoom a span {
+    position: relative;
+    top: 18%;
+    font-size: var(--font-size-icon);
+}
+
+.leaflet-control-zoom a:hover {
+    background: var(--color-acc2);
 }
 
 #buttonBox {
@@ -90,7 +166,7 @@ h1 {
     position: absolute;
     flex-flow: column;
     align-self: flex-end;
-bottom: 0;
+    bottom: 0;
     width: 48px;
     z-index: 15;
     padding: 16px;
@@ -98,60 +174,75 @@ bottom: 0;
 
 }
 
-
 button {
-    font-size: var(--font-size-m);
+    font-size: var(--font-size-icon);
     background-color: var(--color-acc1);
-    color: var(--color-body1);
+    color: var(--color-bg1);
     border: 0;
-    border-radius: 40%;
+    border-radius: 35%;
     aspect-ratio: 1;
     transition: 0.2s;
-    justify-self: center;
-    filter: drop-shadow(0 4px 4px var(--color-shadow) );
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
 
-    
-    
+    i {
+        vertical-align: text-bottom;
+    }
+
+    &:hover, &:focus {
+        background: var(--color-acc2);
+    }
 }
+
+
 
 
 h2 {
+    color: var(--color-body2);
     font-size: var(--font-size-m);
-    padding: var(--spacing1);
-    margin: 0 var(--spacing1);
+    padding-inline: var(--spacing-inline-m);
+    padding-block-start: var(--spacing-block-m);
 }
 
-#dataBox {
-    margin: 0 var(--spacing1);
-    height: 45dvh;
-    overflow-y: scroll;
-    scrollbar-width: thin;
-    scrollbar-color: var(--color-acc1) var(--color-bg2);
+.dataBox {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y:auto;
+        scrollbar-width: thin;
+        scrollbar-color: var(--color-acc1) var(--color-bg2);
 }
+
+
 
 #data {
+    padding-inline: var(--spacing-inline-s);
+    padding-block: var(--spacing-block-s);
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    gap: var(--spacing-block-s);
 }
 
-#data span {
-    padding: var(--spacing1);
-}
 
 
 .card {
     flex: 1 0 auto;
     list-style: none;
-    border-top: #3DAE5A 2px solid;
-    border-left: #3DAE5A 2px solid;
+    border: var(--color-acc1) 1px solid;
     border-radius: 8px;
 
-    /*width: 100%;*/
-    padding: var(--spacing1);
-    margin: var(--spacing1);
-    font-size: var(--font-size-s);
-    line-height: var(--font-size-m);
+    padding: var(--spacing-block-s) var(--spacing-inline-s);
+
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+    transition: all 0.25s ease;
+    transform: translateY(0);
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 8px rgba(0, 0, 0, 0.2);
+    color: var(--color-acc1);
+    /* lighter green on hover */
+    background-color: var(--color-bg2);
 }
 
 .card h3 {
@@ -163,14 +254,15 @@ h2 {
 }
 
 footer {
+    display: flex;
+    min-height: 0;
+    flex: 0 0 auto;
+    padding: var(--spacing-block-m) var(--spacing-inline-m);
+    align-items: center;
+    justify-content: space-around;
     text-align: center;
-    align-content: center;
-    height: min(3rem, 10dvh);
-    background-color: var(--color-bg2);
-
+    font-size: var(--font-size-footer);
+    color: var(--color-acc2);
+    background: var(--color-acc4);
 }
 
-@media (min-width: 768px) {
-
-
-}
