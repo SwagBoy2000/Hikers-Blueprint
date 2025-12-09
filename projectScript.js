@@ -25,7 +25,11 @@ thunderForestOutdoors = L.tileLayer('https://tile.thunderforest.com/outdoors/{z}
 const url = './lycianWayALL.gpx';
 const options = {
     async: true,
-    polyline_options: { color: 'green' },
+    polyline_options: { 
+        color: 'green',
+        weight: 5,
+        opacity: 0.7,
+    },
     markers: {
         startIcon: null,
         endIcon: null,
@@ -68,6 +72,8 @@ const gpx = new L.GPX(url, options).on("addline", function (e) {
         distanceFromStart: pt[0],
         index
     }))
+
+
     
     polyline.on("click", (e) => {        //onclick event on the polyline or gpx track
         getClosestPoint(e);

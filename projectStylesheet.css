@@ -83,19 +83,18 @@ body {
     padding: var(--spacing-block-m) var(--spacing-inline-m);
     align-items: flex-end;
     color: var(--color-acc1);
-    gap: var(--spacing-inline-s);
+    column-gap: var(--spacing-inline-s);
 
     h1 {
         z-index: 10;
         align-content: center;
         font-size: var(--font-size-l);
         font-family: "Rockwell", monospace;
+        margin-bottom: -0.25rem;
     }
 
     span {
         font-style: italic;
-        vertical-align: middle;
-        margin-bottom: 0.1rem;
     }
 }
 
@@ -104,8 +103,8 @@ body {
     display: flex;
     position: relative;
     flex-direction: column;
-    flex: 3 1 auto;
-    min-height: 40vh; 
+    flex: 0 1 auto;
+    min-height: 30vh; 
     max-height: 70vh;
 }
 
@@ -188,7 +187,7 @@ button {
         vertical-align: text-bottom;
     }
 
-    &:hover, &:focus {
+    &:hover {
         background: var(--color-acc2);
     }
 }
